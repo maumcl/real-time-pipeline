@@ -40,9 +40,3 @@ Each record in the stream represents **a user activity event** with the followin
 | `location`         | String    | User’s location (e.g., New York, Tokyo, Sydney) |
 | `mood`            | String     | User's mood (happy, neutral, sad)               |
 
-## 🚀 **Next Steps**  
-- ✅ **Ensure Kafka is properly handling message ingestion**  
-- ✅ **Process data using Spark Streaming**  
-- 🔜 **Write the processed data to Google BigQuery**  
-- 🔜 **Perform analytical queries on BigQuery for insights**  
-
