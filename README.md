@@ -1,7 +1,7 @@
 # **Real-Time Data Pipeline with Kafka, Spark, and BigQuery**
 
 ## 📌 **Description**  
-This project implements a real-time data pipeline using **Apache Kafka** for data ingestion, **Apache Spark Streaming** for processing, and **Google BigQuery** for storage and analysis.  
+This project implements a real-time data pipeline using **Apache Kafka** for data ingestion, **Apache Spark Streaming** for processing and **Google BigQuery** for storage and analysis.  
 
 The dataset consists of **simulated user activity data**, including metrics related to steps, calories burned, distance traveled, heart rate, and sleep patterns. These records are continuously produced and consumed in real-time to demonstrate a streaming ETL workflow.  
 
