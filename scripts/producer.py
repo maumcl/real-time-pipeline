@@ -48,4 +48,5 @@ for _ in range(1000):  # Produce 1000 messages
     data = generate_user_activity()
     producer.produce(topic, key=str(data['user_id']), value=json.dumps(data))
     producer.flush()
+    print(f"Message sent: {data}")  # Adicionado para verificar se o produtor está funcionando
     time.sleep(1)  # Simulate real-time data (1 message per second)

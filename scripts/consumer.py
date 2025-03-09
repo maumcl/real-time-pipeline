@@ -1,4 +1,5 @@
 from confluent_kafka import Consumer
+import sys
 
 # Kafka configuration
 conf = {
@@ -15,8 +16,10 @@ consumer.subscribe(['user_activity'])
 
 # Poll for messages
 while True:
-    msg = consumer.poll(1.0)
+    print("Polling for messages...")  # Log para verificar se está tentando receber
+    msg = consumer.poll(1.0)  # Timeout de 1 segundo
     if msg is None:
+        print("No message received...")  # Caso não receba nada
         continue
     if msg.error():
         print(f"Error: {msg.error()}")

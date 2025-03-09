@@ -1,0 +1,49 @@
+✅ STEP 1
+If you are using Docker Compose to run Kafka, start the services first:
+docker-compose up -d
+
+Check running containers:
+docker ps
+
+If there are any issues, check logs:
+
+docker logs <container_id>
+______________________________
+
+✅ STEP 2
+Now, let’s start your Kafka producer (it should send messages to a Kafka topic):
+
+python scripts/producer.py
+
+This script should generate or read data and push it into Kafka.
+______________________________
+
+
+✅ Step 3: Run the Kafka Consumer
+In another terminal window, run the Kafka consumer:
+
+python scripts/consumer.py
+
+This should consume messages from Kafka.
+Check if it prints the messages coming from producer.py.
+_______________________________
+
+✅ Step 4: Run the Spark Job
+Now, execute your Spark Streaming Job:
+
+spark-submit scripts/spark_streaming/spark_job.py
+
+If you are running inside a Docker container, use:
+docker exec -it <spark_container_id> spark-submit /app/scripts/spark_streaming/spark_job.py
+
+If you’re using a virtual environment, make sure it’s activated before running:
+source venv/bin/activate  # If using venv
+_______________________________
+
+
+✅ Step 5: Verify Data Flow
+Now, let's check if data is flowing properly:
+
+Is Kafka Producer sending data? (Check its logs or print statements).
+Is Kafka Consumer receiving data?
+Is Spark reading from Kafka and writing the transformed data to data/processed/?
