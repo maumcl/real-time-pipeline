@@ -9,7 +9,6 @@ The dataset consists of **simulated user activity data**, including metrics rela
 - 🐍 **Python** – Core programming language  
 - 🛠 **Apache Kafka** – Message broker for real-time data ingestion  
 - ⚡ **Apache Spark Streaming** – Stream processing framework  
-- ☁ **Google BigQuery** – Storage and analytics platform  
 - 🐳 **Docker** – Containerization for easy service setup  
 
 ## 🔧 **Project Architecture**  
