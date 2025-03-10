@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 
+# Definição do schema
 schema = StructType([
     StructField("user_id", IntegerType()),
     StructField("date", StringType()),
@@ -17,11 +18,13 @@ schema = StructType([
     StructField("mood", StringType())
 ])
 
+# Inicializando a sessão do Spark
 spark = SparkSession.builder \
     .appName("UserActivityStreaming") \
     .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.4") \
     .getOrCreate()
 
+# Lendo dados do Kafka
 df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
@@ -29,21 +32,36 @@ df = spark.readStream \
     .option("startingOffsets", "earliest") \
     .load()
 
+# Parseando os dados com o schema
 parsed_df = df.select(
-    from_json(col("value").cast("string"), schema).alias("data")
-).select("data.*")
+    from_json(col("value").cast("string"), schema).alias("data"),
+    col("timestamp")  # Adicionando a coluna timestamp
+).select("data.*", "timestamp")
 
-processed_df = parsed_df.groupBy("user_id") \
-    .agg({"steps": "sum", "calories_burned": "avg"}) \
-    .withColumnRenamed("sum(steps)", "total_steps") \
-    .withColumnRenamed("avg(calories_burned)", "avg_calories_burned")
+# Extraindo os nomes das colunas para o cabeçalho
+columns = parsed_df.columns
 
-query = processed_df.writeStream \
-    .outputMode("complete") \
-    .format("console") \
-    .option("truncate", "false") \
-    .option("numRows", 10) \
+# 1. Escrevendo o cabeçalho uma única vez
+# Verificando se o arquivo de cabeçalho já existe para evitar sobrescrever
+import os
+header_path = "/home/mauricio/git/real-time-pipeline/data/output_header/"
+
+if not os.path.exists(header_path):
+    header_df = spark.createDataFrame([columns], StructType([StructField(c, StringType(), True) for c in columns]))
+    header_df.write \
+        .format("csv") \
+        .mode("overwrite") \
+        .option("header", "true") \
+        .save(header_path)
+
+# 2. Escrevendo os dados em arquivos CSV continuamente
+query = parsed_df.writeStream \
+    .outputMode("append") \
+    .format("csv") \
+    .option("path", "/home/mauricio/git/real-time-pipeline/data/output/") \
+    .option("checkpointLocation", "/home/mauricio/git/real-time-pipeline/data/new_checkpoint") \
     .trigger(processingTime="10 seconds") \
     .start()
 
-query.awaitTermination(60)  # Stop after 60 seconds
+# Aguardando a execução do stream por 60 segundos
+query.awaitTermination(60)
